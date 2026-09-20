@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "dotnet",
+  "displayName": ".NET",
+  "version": "0.1.0",
+  "description": "Skills specific to .NET/EF Core projects — currently the rule to apply EF Core migrations to the local database in the same turn they are created. Does not depend on the workflow plugin.",
+  "author": {
+    "name": "Thalles Lima"
+  },
+  "keywords": ["dotnet", "ef-core", "migrations"]
+}

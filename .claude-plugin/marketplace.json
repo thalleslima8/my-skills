@@ -1,0 +1,27 @@
+{
+  "$schema": "https://code.claude.com/schemas/marketplace.json",
+  "name": "my-skills",
+  "description": "Personal Claude Code commands, agents and skills, distributed as plugins.",
+  "version": "0.1.0",
+  "owner": {
+    "name": "Thalles Lima"
+  },
+  "plugins": [
+    {
+      "name": "workflow",
+      "source": "./plugins/workflow",
+      "description": "Technical/functional mediation commands and agents (/analyst, /arquiteto, /flow, /spike, /qa, /infra) plus skills for test-failure triage, code review and commit conventions.",
+      "version": "0.1.0",
+      "category": "workflow",
+      "keywords": ["workflow", "epics", "code-review", "tdd"]
+    },
+    {
+      "name": "dotnet",
+      "source": "./plugins/dotnet",
+      "description": "Skills specific to .NET/EF Core projects.",
+      "version": "0.1.0",
+      "category": "dotnet",
+      "keywords": ["dotnet", "ef-core"]
+    }
+  ]
+}
