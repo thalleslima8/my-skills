@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "workflow",
   "displayName": "Workflow",
-  "version": "0.1.0",
-  "description": "Technical/functional mediation commands and agents (/analyst, /arquiteto, /flow, /spike, /qa, /infra), plus skills for test-failure triage, code review and commit conventions. Stack-agnostic — project-specific conventions live in each repo's CLAUDE.md.",
+  "version": "0.3.0",
+  "description": "Technical/functional mediation commands and agents (/analyst, /arquiteto, /flow, /spike, /qa, /infra), plus skills for test-failure triage, code review, commit conventions and migrating a legacy .claude/ to these plugins. Stack-agnostic — project-specific conventions live in each repo's CLAUDE.md.",
   "author": {
     "name": "Thalles Lima"
   },

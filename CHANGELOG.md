@@ -2,6 +2,16 @@
 
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.3.0] - 2026-09-20
+
+### Added
+
+- `migrate-legacy-claude` skill in the `workflow` plugin — a procedure for moving a project that already has its own `.claude/` (local commands and rules) onto the my-skills plugins. Inventory of every `.claude/` and CLAUDE.md, classification of each local command (A direct equivalent / B partial equivalent / C no equivalent, compared by responsibility, not file name), extraction of the project-specific parts of B commands into the project's `CLAUDE.md` (created from the ai-starter-kit template if missing), then backup, removal of A/B commands, and a non-destructive merge of the marketplace and plugin declarations into `.claude/settings.json`. Always shows a dry-run report and waits for confirmation before any write; C commands are never removed.
+
+### Changed
+
+- `workflow` plugin version `0.1.0` → `0.3.0`; marketplace version `0.2.0` → `0.3.0`.
+
 ## [0.2.0] - 2026-09-20
 
 ### Added
@@ -35,5 +45,6 @@ Initial migration of the command set that lived in `limaj-framework` (`.claude/c
 - `flow.md`: the mechanism of "read `arquiteto.md`/`analyst.md` with Read and use it as a prompt prefix" was replaced by direct `Agent(subagent_type: "arquiteto")` / `Agent(subagent_type: "analyst")` calls. The mediation logic (independent opinions, cross-check, one counter-argument round, escalation, epic formalization) is unchanged.
 - `analyst.md`, `qa.md`: migrated with minimal adjustment — they were already generic enough.
 
+[0.3.0]: https://github.com/thalleslima8/my-skills/releases/tag/v0.3.0
 [0.2.0]: https://github.com/thalleslima8/my-skills/releases/tag/v0.2.0
 [0.1.0]: https://github.com/thalleslima8/my-skills/releases/tag/v0.1.0

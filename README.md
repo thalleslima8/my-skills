@@ -35,6 +35,7 @@ Skills (trigger on their own based on context, no command needed):
 - `test-failure-triage` — protocol for classifying a failing existing test (real regression / rule changed / flaky).
 - `code-review` — review checklist (general + layers + tests), with an optional .NET example.
 - `conventional-commit` — commit message convention (`feat`/`fix`/etc.).
+- `migrate-legacy-claude` — migrates an existing project that has its own `.claude/` (local commands and rules) to these plugins without losing anything project-specific: inventories the local commands, classifies each as direct equivalent / partial equivalent / no equivalent, moves the project-specific parts to `CLAUDE.md`, backs up `.claude/`, removes only the replaced commands and declares the marketplace in `.claude/settings.json`. Shows a dry-run report and waits for confirmation before changing anything. Use it on an old project; for a new/empty one, start from the ai-starter-kit instead.
 
 ### `dotnet` plugin
 
