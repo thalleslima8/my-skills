@@ -42,15 +42,22 @@ Stack-specific skills — only relevant to projects using that technology:
 
 - `ef-migrations` — every EF Core migration created is applied to the local database in the same turn.
 
+### `writing` plugin
+
+Skills for editing prose, independent of any code stack:
+
+- `humanizer` — rewrites AI-sounding text so it reads like the writer without changing what it says. Adapted from [blader/humanizer](https://github.com/blader/humanizer) (MIT, Copyright (c) 2025 Siqi Chen); the original license is kept next to the skill.
+
 ## Installation
 
 ```
 /plugin marketplace add thalleslima8/my-skills
 /plugin install workflow@my-skills
 /plugin install dotnet@my-skills
+/plugin install writing@my-skills
 ```
 
-Install `dotnet@my-skills` only in projects that actually use .NET/EF Core — the `workflow` plugin does not depend on it.
+Install `dotnet@my-skills` only in projects that actually use .NET/EF Core — the `workflow` plugin does not depend on it. `writing@my-skills` is standalone and can be installed anywhere.
 
 ## Versioning
 

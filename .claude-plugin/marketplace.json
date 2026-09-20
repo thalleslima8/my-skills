@@ -2,7 +2,7 @@
   "$schema": "https://code.claude.com/schemas/marketplace.json",
   "name": "my-skills",
   "description": "Personal Claude Code commands, agents and skills, distributed as plugins.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "owner": {
     "name": "Thalles Lima"
   },
@@ -22,6 +22,14 @@
       "version": "0.1.0",
       "category": "dotnet",
       "keywords": ["dotnet", "ef-core"]
+    },
+    {
+      "name": "writing",
+      "source": "./plugins/writing",
+      "description": "Skills for editing prose — a humanizer that rewrites AI-sounding text so it reads naturally without changing what it says. Adapted from blader/humanizer (MIT).",
+      "version": "0.2.0",
+      "category": "writing",
+      "keywords": ["writing", "editing", "humanize", "prose"]
     }
   ]
 }

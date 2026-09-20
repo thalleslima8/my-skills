@@ -2,6 +2,12 @@
 
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.2.0] - 2026-09-20
+
+### Added
+
+- `writing` plugin with the `humanizer` skill, adapted from [blader/humanizer](https://github.com/blader/humanizer) v3.0.0 (MIT, Copyright (c) 2025 Siqi Chen). The skill text is kept as upstream; changes are limited to the frontmatter (`upstream` and `upstream-version` metadata instead of `version`) and an attribution line in the "Source" section. The upstream `LICENSE` ships next to the skill.
+
 ## [0.1.0] - 2026-09-20
 
 ### Added
@@ -29,4 +35,5 @@ Initial migration of the command set that lived in `limaj-framework` (`.claude/c
 - `flow.md`: the mechanism of "read `arquiteto.md`/`analyst.md` with Read and use it as a prompt prefix" was replaced by direct `Agent(subagent_type: "arquiteto")` / `Agent(subagent_type: "analyst")` calls. The mediation logic (independent opinions, cross-check, one counter-argument round, escalation, epic formalization) is unchanged.
 - `analyst.md`, `qa.md`: migrated with minimal adjustment — they were already generic enough.
 
+[0.2.0]: https://github.com/thalleslima8/my-skills/releases/tag/v0.2.0
 [0.1.0]: https://github.com/thalleslima8/my-skills/releases/tag/v0.1.0

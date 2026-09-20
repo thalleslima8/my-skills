@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "writing",
+  "displayName": "Writing",
+  "version": "0.2.0",
+  "description": "Skills for editing prose — currently a humanizer that rewrites AI-sounding text so it reads naturally without changing what it says. Adapted from blader/humanizer (MIT).",
+  "author": {
+    "name": "Thalles Lima"
+  },
+  "keywords": ["writing", "editing", "humanize", "prose", "style"]
+}

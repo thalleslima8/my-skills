@@ -39,6 +39,10 @@ Examples in this repository: `test-failure-triage` (should fire every time an ex
 
 If a skill only makes sense for a specific stack/framework (e.g. a rule that only exists in Rails projects, or in projects with Terraform), **do not put it in the `workflow` plugin** — create (or use) a plugin dedicated to that stack, like this repository's `dotnet` plugin. This keeps `workflow` installable in any project, regardless of stack.
 
+## Third-party content
+
+When adapting a skill, command or agent from another project, check its license first. Keep the original license file next to the adapted artifact, name the upstream repository and version in the artifact's frontmatter, and list the modifications in `CHANGELOG.md`. Example: `plugins/writing/skills/humanizer/`.
+
 ## Checklist before opening a change
 
 - [ ] The new/changed artifact does not mention a product name, company name or specific stack outside the matching stack plugin
@@ -46,4 +50,5 @@ If a skill only makes sense for a specific stack/framework (e.g. a rule that onl
 - [ ] Any reference to a structural convention (e.g. where epics live) is marked "if the project uses that convention"
 - [ ] The skill/agent `description` is specific enough to fire / be called at the right time
 - [ ] Everything is written in English
+- [ ] Third-party content keeps its license and attribution
 - [ ] `CHANGELOG.md` is updated
