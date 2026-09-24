@@ -39,6 +39,16 @@ Examples in this repository: `test-failure-triage` (should fire every time an ex
 
 If a skill only makes sense for a specific stack/framework (e.g. a rule that only exists in Rails projects, or in projects with Terraform), **do not put it in the `workflow` plugin** — create (or use) a plugin dedicated to that stack, like this repository's `dotnet` plugin. This keeps `workflow` installable in any project, regardless of stack.
 
+## Skills that ship code
+
+A skill may carry a script it calls (e.g. `plugins/workflow/skills/api/scripts/api.py`). Keep it standard-library only, keep everything project-specific in the project's own configuration files, and ship its tests next to it (`tests/`, stdlib `unittest`). Run them from the repository root, in an environment that has Python 3:
+
+```
+python3 -m unittest discover -s plugins/workflow/skills/api/tests -v
+```
+
+Say in the change description if you could not run them — do not report them as passing.
+
 ## Third-party content
 
 When adapting a skill, command or agent from another project, check its license first. Keep the original license file next to the adapted artifact, name the upstream repository and version in the artifact's frontmatter, and list the modifications in `CHANGELOG.md`. Example: `plugins/writing/skills/humanizer/`.
