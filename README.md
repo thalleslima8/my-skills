@@ -61,6 +61,31 @@ Skills for editing prose, independent of any code stack:
 
 Install `dotnet@my-skills` only in projects that actually use .NET/EF Core — the `workflow` plugin does not depend on it. `writing@my-skills` is standalone and can be installed anywhere.
 
+## New project vs. existing project
+
+This repository is complementary to [ai-starter-kit](https://github.com/thalleslima8/ai-starter-kit): this one holds the *process* (plugins), the starter kit holds the per-project *layer* (`.claude/settings.json` declaring this marketplace, plus a `CLAUDE.md` template with placeholders).
+
+- **New project** — start from the ai-starter-kit and follow its README. The `settings.json` it ships already enables the `workflow` plugin; you only fill in `CLAUDE.md`.
+- **Existing project with its own `.claude/`** — migrate it with the `migrate-legacy-claude` skill, as described below.
+
+### Adopting in an existing project
+
+1. **Install the plugin first.** The migration skill ships inside `workflow`, so it must be available before the project is migrated:
+   ```
+   /plugin marketplace add thalleslima8/my-skills
+   /plugin install workflow@my-skills
+   ```
+2. **Ask for the migration** inside the project, e.g. "migrate this project to my-skills". The skill triggers on its own.
+3. **Review the dry-run report.** Nothing is changed yet. The skill inventories every local command and classifies it as **A** (direct equivalent), **B** (partial equivalent with project rules mixed in) or **C** (project-only automation, never removed). It shows which project-specific passages will move to `CLAUDE.md` and under which section, and asks about anything ambiguous.
+4. **Confirm the plan.** Only then does the skill:
+   - back up the whole `.claude/` (and the original `CLAUDE.md`) to `.claude.bak-<YYYY-MM-DD>/`;
+   - write the extracted passages into `CLAUDE.md` and verify each one landed;
+   - merge `extraKnownMarketplaces` and `enabledPlugins` into `.claude/settings.json` without touching permissions, hooks or env (adding `dotnet@my-skills` for .NET/EF Core projects);
+   - remove only the A and B command files.
+5. **Finish by hand.** Restart Claude Code in the project and check that the plugin commands (`/spike`, `/qa`, …) resolve. Decide whether to gitignore or commit the backup, then commit — the skill never commits.
+
+After the migration the project's `.claude/` keeps only what is its own: `settings.json`, category C commands, local agents/skills and project config such as `.claude/api/`.
+
 ## Versioning
 
 - One tag per improvement (e.g. `v0.2.0` when a new skill or flow adjustment is added) — no scheduled releases, no batching unrelated changes under one tag.
