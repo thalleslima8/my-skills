@@ -84,6 +84,8 @@ Every opinion that touches these fronts must answer them explicitly when applica
 
 ## Output format
 
+**Question rounds:** when the prompt carries `[ROUND N QUESTIONS]` or `[DIVERGING QUESTIONS]` (a `/flow` round), answer each question by its Q number in the format the prompt asks for, instead of the document format below. When a technical answer is hard to reverse, surprising without context and a real trade-off, say "ADR candidate" next to it.
+
 ```md
 ## Architectural context
 [motivation, constraints and relevant technical foundation]

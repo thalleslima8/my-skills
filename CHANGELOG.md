@@ -2,6 +2,23 @@
 
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.5.0] - 2026-10-02
+
+### Added
+
+- `grill-me` skill in the `workflow` plugin, started with `/grill-me [docs | no-docs] [topic]` or by `/flow`; its description tells Claude never to start it on its own. It merges `grill-me`, `grill-with-docs` and `grilling` from [mattpocock/skills](https://github.com/mattpocock/skills) at `d81f3a183412` (MIT, Copyright (c) 2026 Matt Pocock); upstream, the first two are one-line wrappers around `grilling` and `domain-modeling`. The upstream `LICENSE` ships next to the skill.
+  - Kept from upstream: the design tree worked in rounds (the whole frontier per round, numbered, with a recommended answer), facts looked up through sub-agents without blocking the rest of the round, decisions left to the user, and no action before the user confirms the shared understanding.
+  - Changed: one skill with two modes instead of two skills. Docs mode (applies `domain-modeling`) is picked automatically inside a repository and plain (stateless) mode outside one, announced in the first round; `docs` / `no-docs` override it. Questions are asked in the user's language. The skill pushes back once on an answer that looks wrong, keeps "I don't know" as an open decision, sends ungrillable questions to a throwaway prototype (`/spike`), proposes splitting when the scope keeps growing, honors a "one question at a time" rule from `CLAUDE.md`, and never commits. `disable-model-invocation` is not set, so a command can run it; when one does, the command's scope and next step win.
+- `domain-modeling` skill in the `workflow` plugin, adapted from the upstream skill of the same name. It triggers on its own when terms are being challenged or defined, when `GLOSSARY.md` is edited, or when an ADR is recorded. `GLOSSARY-FORMAT.md` and `ADR-FORMAT.md` are kept from upstream. Changes: the project's `CLAUDE.md` can name other locations for the glossary and ADRs; read-only personas (`/analyst`, the agents) only propose terms and ADR candidates, and sessions that write docs record them; ADRs are linked both ways to the `DA-###` decisions of `/arquiteto` and `/flow`; files are never committed.
+
+### Changed
+
+- `/flow` now runs on `grill-me`'s design tree, with the specialists (not the user) answering the rounds. Each round puts the whole frontier to the architect and the analyst independently, with a one-line-per-decision `[SETTLED SO FAR]`, since agents keep no memory. The cross-check and the single counter-argument now apply per question (the counter-argument batched in one call per agent). Converged answers settle; a question still diverging after the counter-argument, or one that is the user's alone (goal, priority, budget, acceptable risk, business approval), is parked for the user. The user is asked mid-tree only when a parked question blocks the whole frontier; everything else comes at the end in one summary (consensus + what needs their decision + glossary terms + ADR candidates). Limit of 4 rounds per point, after which `/flow` proposes splitting. Consensus terms go to the glossary through `domain-modeling`, and when formalizing an epic `/flow` offers an ADR for each qualifying `DA-###`.
+- `arquiteto` and `analyst` agents: when the prompt is a `/flow` question round, they answer per Q number in the requested format instead of their document/epic format; the architect marks ADR candidates, the analyst proposes canonical terms.
+- `/arquiteto` reads the project's glossary at start-up and applies `domain-modeling` (glossary terms, ADRs for qualifying `DA-###` decisions).
+- `/analyst` challenges the language against `GLOSSARY.md` (now the one repository file it may read, along with ADR titles) and lists settled terms and ADR candidates in the epic draft for `/flow` to record.
+- `workflow` plugin version `0.4.0` → `0.5.0`; marketplace version `0.4.0` → `0.5.0`.
+
 ## [0.4.0] - 2026-09-20
 
 ### Added

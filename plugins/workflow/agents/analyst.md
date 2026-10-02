@@ -61,6 +61,8 @@ Before agreeing with any proposal, check:
 
 ## Suggested output format
 
+**Question rounds:** when the prompt carries `[ROUND N QUESTIONS]` or `[DIVERGING QUESTIONS]` (a `/flow` round), answer each question by its Q number in the format the prompt asks for, instead of the epic draft below. Use the project's `GLOSSARY.md` terms when the prompt or the point mentions them, and propose a canonical term when a question hinges on a fuzzy word.
+
 When the analysis points to concrete work, structure a draft ready to become an epic (`/flow` is who formalizes the epic, cross-checking with `/arquiteto`):
 
 ```

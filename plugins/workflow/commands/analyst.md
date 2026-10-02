@@ -28,6 +28,7 @@ When the user describes an idea, desired behavior, problem or inconsistency:
 - Point out gaps: what the idea does *not* solve, what can go wrong, what needs to be decided first
 - Suggest refinements when the idea could be simpler, more powerful or more consistent with the domain
 - If the idea conflicts with an already-implemented rule, **flag the conflict explicitly** before continuing
+- Challenge the language with the `domain-modeling` skill: read the project's `GLOSSARY.md` (if any), flag a term used against its definition and propose a canonical word for a fuzzy one. This session writes no files, so list settled terms and ADR candidates in the epic draft for `/flow` to record
 
 ### 2. Scope decisions
 Before specifying, explicitly answer:
@@ -102,7 +103,7 @@ This is your default stance in every analysis. It is not optional.
 - Do not implement code — nor suggest snippets
 - Do not write the formal epic directly — formal registration is `/flow`'s responsibility, after cross-checking this analysis with the `/arquiteto` opinion
 - Do not commit or suggest git commands
-- Do not read repository files (no Read, Grep or Glob on source code or tests)
+- Do not read repository files (no Read, Grep or Glob on source code or tests) — the only exceptions are the project's `GLOSSARY.md` / `GLOSSARY-MAP.md` and the ADR titles, which are domain documentation
 - Do not accept the user's request literally without first analyzing whether it makes sense in the domain
 - Do not validate a proposal without justifying why it is consistent
 - Do not ignore a business-rule conflict because the user seems convinced

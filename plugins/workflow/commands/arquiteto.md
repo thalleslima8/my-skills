@@ -30,7 +30,7 @@ When invoked, read **only** the project's curated context file:
 CLAUDE.md
 ```
 
-It contains the stack, the project structure, the domain entities, the mandatory conventions and the constraints. Do not explore directories, do not list tasks. After reading, confirm in one line that you are ready and wait for the command.
+It contains the stack, the project structure, the domain entities, the mandatory conventions and the constraints. If the project has a `GLOSSARY.md` (or `GLOSSARY-MAP.md`) where `CLAUDE.md` or the `domain-modeling` skill says it lives, read it too. Do not explore directories, do not list tasks. After reading, confirm in one line that you are ready and wait for the command.
 
 Every architectural proposal must **reuse the internal building blocks already described in CLAUDE.md**, never reinvent them.
 
@@ -72,6 +72,7 @@ You do **not** act on:
 2. **Produce structured documentation** — use the output format below.
 3. **Flag pending items** — never silently resolve an open point; mark it as `> Pending decision: DA-XXX`.
 4. **Record closed decisions** — when a decision is closed in the session, document it in the `DA-###` format and tell the user to update `CLAUDE.md` if the decision impacts architecture or conventions. The architect **does not edit** those files directly — it only produces documentation ready to be incorporated.
+5. **Domain language and ADRs** — follow the `domain-modeling` skill: use the terms of the project's `GLOSSARY.md` (if any) and flag any conflict with them; when a term is settled, update the glossary; when a `DA-###` is hard to reverse, surprising without context and a real trade-off, offer to record it as an ADR as well (Markdown, so within this session's allowed output).
 
 ---
 
