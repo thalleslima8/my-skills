@@ -11,7 +11,7 @@ Use `commands/` when:
 - The behavior involves **controlling a whole session** — initialization, modes, internal state accumulated over many turns, "session is getting heavy" warnings.
 - It makes sense for the person to type `/command-name` and see it as the start of a workflow, not as an implementation detail.
 
-Examples in this repository: `/spike` (a whole development session, with modes), `/flow` (a mediation session with state accumulated across discussed points).
+Examples in this repository: `/spike` (a whole development session, with modes), `/flow` (a mediation session with state accumulated across discussed points, or, on an explicit request, a run that implements the epics up to a single pull request).
 
 ## Agent — when another process (not a person) needs the same persona in isolation
 
@@ -31,7 +31,7 @@ Use `skills/` when:
 - It makes no sense for the person to remember to invoke it explicitly — if they forget, the correct behavior should still happen.
 - The trigger can be described in one clear `description` sentence that lets Claude decide on its own when to apply it.
 
-Examples in this repository: `test-failure-triage` (should fire every time an existing test fails, not only when someone remembers to ask), `code-review` (the review checklist should apply both inside `/spike` and in any other review context), `conventional-commit` (a message convention that should apply to any generated commit, not only inside one specific flow), `ef-migrations` (a rule that only applies to .NET/EF Core projects — which is why it lives in a separate plugin, not inside `workflow`).
+Examples in this repository: `test-failure-triage` (should fire every time an existing test fails, not only when someone remembers to ask), `code-review` (the standards-driven review should apply both inside `/spike` and in any other review context), `conventional-commit` (a message convention that should apply to any generated commit, not only inside one specific flow), `ef-migrations` (a rule that only applies to .NET/EF Core projects — which is why it lives in a separate plugin, not inside `workflow`).
 
 **Sign that something should be a skill instead of staying inside a command:** the logic is written inside a command's `.md`, but would be equally valid if triggered from anywhere else in the project. In that case, extract it to `skills/` and let the command just reference the skill by name.
 
