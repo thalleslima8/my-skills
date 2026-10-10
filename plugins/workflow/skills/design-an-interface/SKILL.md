@@ -50,7 +50,7 @@ Then write the user a short framing of the problem: the requirements, the constr
 
 ### 2. Generate designs in parallel
 
-Spawn 3 or 4 general-purpose sub-agents in the same message. Each gets the same technical brief (the module's purpose, the requirements, the callers' file paths, the existing modules of the same kind, the frontend rules that apply, and the domain terms from `GLOSSARY.md` if there is one) plus a **different constraint**:
+Spawn 3 or 4 general-purpose sub-agents in the same message, each called with `model: "sonnet"` unless the user asked for another model: the value is in the contrast between the designs, which the comparison step judges. Each gets the same technical brief (the module's purpose, the requirements, the callers' file paths, the existing modules of the same kind, the frontend rules that apply, and the domain terms from `GLOSSARY.md` if there is one) plus a **different constraint**:
 
 - Agent 1: "Minimize the interface: as few props, arguments or returned fields as possible. Make the module decide everything it can."
 - Agent 2: "Maximize flexibility through composition: children, slots, render props, compound components or a headless core, so callers can build cases you have not foreseen."
@@ -94,12 +94,12 @@ When the user picks, restate the chosen interface in one block, the signature pl
 
 ## Under /flow's execution mode
 
-When `/flow` implements epics with no user in the loop, `/spike` runs as a sub-agent and cannot spawn this skill's sub-agents. It stops and hands the module back to `/flow` (a `BLOCKED` block of kind `interface`), and `/flow` runs this skill in its own session with these overrides:
+When `/flow` implements epics with no user in the loop, the implementer is the `spike` agent, a sub-agent that cannot spawn this skill's sub-agents. It stops and hands the module back to `/flow` (a `BLOCKED` block of kind `interface`), and `/flow` runs this skill in its own session with these overrides:
 
 - **Step 1:** the framing goes into the architect's prompt instead of to the user. What the code and docs cannot answer goes to the architect and the analyst, never to the user.
 - **Steps 2–4:** unchanged.
 - **Step 5:** `/flow` gives no recommendation of its own. The **architect picks** one design or a stated hybrid, and the **analyst validates** it against the epic's use cases and states. An objection gets one counter-argument; if they still disagree, the architect's choice stands as a provisional decision, unless the question is critical under `/flow`'s criteria, in which case `/flow` stops and asks the user.
-- **Recording:** the choice becomes a `DA-###` in the epic, and the restated interface goes back to `/spike` as the reference for implementation.
+- **Recording:** the choice becomes a `DA-###` in the epic, and the restated interface goes back to the spike as the reference for implementation.
 
 ## Anti-patterns
 

@@ -1,6 +1,6 @@
 ---
 name: conventional-commit
-description: Use whenever generating a commit message for a finished code change — follows the Conventional Commits format (feat/fix/etc.), in English. Triggers automatically at the end of any implementation, fix or refactor, regardless of which command or agent is active. Never runs the commit itself — only produces the message; the one exception is /flow's execution mode, where /flow runs the commit with the message /spike produced.
+description: Use whenever generating a commit message for a finished code change — follows the Conventional Commits format (feat/fix/etc.), in English. Triggers automatically at the end of any implementation, fix or refactor, regardless of which command or agent is active. Never runs the commit itself — only produces the message; the one exception is /flow's execution mode, where /flow runs the commit with the message its spike agent produced.
 ---
 
 # Commit message convention
@@ -37,6 +37,6 @@ type(scope): short description in the imperative mood
 | Context | Who writes the message | Who runs `git commit` |
 |---|---|---|
 | Any session, including `/spike` called by the user | The session | The user |
-| `/flow` in execution mode | `/spike`, in its `DONE` block | `/flow` — one commit per epic, plus one commit (usually `fix(...)`) per CI fix round and per pull request comment round, each referencing the epic's slug and followed by a push |
+| `/flow` in execution mode | The `spike` agent, in its `DONE` block (the last slice writes the message for the whole epic) | `/flow` — one commit per epic, plus one commit (usually `fix(...)`) per CI fix round and per pull request comment round, each referencing the epic's slug and followed by a push |
 
-In `/flow`'s execution mode, `/flow` checks the message against these rules before committing and adds to an epic commit's body everything the pull request description needs from that epic: the `DA-###` (provisional ones marked), the SHOULD-rule deviations the architect accepted (`Deviations: {rule ID} — {reason}`), the non-blocking review findings (MAY, baseline, `not verifiable`) and the Spec findings. `/spike` never commits or pushes, in any mode.
+In `/flow`'s execution mode, `/flow` checks the message against these rules before committing and adds to an epic commit's body everything the pull request description needs from that epic: the `DA-###` (provisional ones marked), the SHOULD-rule deviations the architect accepted (`Deviations: {rule ID} — {reason}`), and the review findings still open after the polish round (MAY, baseline, late and Spec findings, plus the `not verifiable` rules). Neither the `/spike` command nor the `spike` agent ever commits or pushes.

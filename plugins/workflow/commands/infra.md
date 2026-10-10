@@ -54,8 +54,8 @@ This set of commands (`/analyst`, `/arquiteto`, `/flow`, `/spike`, `/qa`, `/infr
 |---|---|
 | `/analyst` | Functional business rules, edge cases, scope, and legal/compliance risks of a proposal. Produces epic drafts. |
 | `/arquiteto` | Technical design, stack, TDD, security/DevSecOps. Produces documentation only (Markdown). |
-| `/flow` | Mediates discussions between `/arquiteto` and `/analyst` — independent opinions, cross-check, at most 1 counter-argument round, escalation to the user if conflict persists. Formalizes the consensus as an epic. On an explicit request to implement, conducts `/spike`, `/arquiteto` and `/analyst` through the epics, commits one epic at a time on a `flow/<date>` branch and stops at a single pull request. |
-| `/spike` | The only agent that changes product code — investigates, implements, fixes bugs and reviews, always implementing the formalized epic/instruction. Under `/flow`'s execution mode it runs as a sub-agent and never commits. |
+| `/flow` | Mediates discussions between `/arquiteto` and `/analyst` — independent opinions, cross-check, at most 1 counter-argument round, escalation to the user if conflict persists. Formalizes the consensus as an epic. On an explicit request to implement, conducts its `spike` agent, the architect and the analyst through the epics, commits one epic at a time on a `flow/<date>` branch and stops at a single pull request. |
+| `/spike` | The only command that changes product code — investigates, implements, fixes bugs and reviews, always implementing the formalized epic/instruction. Under `/flow`'s execution mode the implementer is the plugin's `spike` agent, which never commits. |
 | `/qa` | Independent execution of tests and suites, driven by epics/documentation/code; autonomy over local test data. |
 | `/infra` | **This session** — local infrastructure of the current project. |
 

@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "workflow",
   "displayName": "Workflow",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Technical/functional mediation commands and agents (/analyst, /arquiteto, /flow, /spike, /qa, /infra) — /flow can also implement the epics autonomously up to a single pull request — plus skills for test-failure triage, code review, commit conventions, migrating a legacy .claude/ to these plugins and an exploratory HTTP client for the local API. Also /grill-me, a round-based interview that /flow also uses to grill its specialist agents, domain-modeling, which keeps the project glossary (GLOSSARY.md) and ADRs, /loop-me, which grills you into specs for the recurring workflows you want to delegate, and design-an-interface, which designs a frontend module's interface twice (or more) before /spike implements it. Stack-agnostic — project-specific conventions live in each repo's CLAUDE.md.",
   "author": {
     "name": "Thalles Lima"

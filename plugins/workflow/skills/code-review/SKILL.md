@@ -21,7 +21,7 @@ The repository is the authority. A generic reviewer flags what is deliberate in 
 
 Both axes run as **parallel sub-agents** so neither sees the other's reasoning. This skill then verifies their findings and reports the two axes side by side.
 
-**Report only. Do not fix anything in this step.** Fixing is a separate round, after the user confirms which findings to act on — or, in gate mode, after `/flow` sends the blocking findings to `/spike` (see "Gate mode").
+**Report only. Do not fix anything in this step.** Fixing is a separate round, after the user confirms which findings to act on — or, in gate mode, after `/flow` sends the blocking findings to its `spike` agent (see "Gate mode").
 
 ## Process
 
@@ -79,7 +79,7 @@ In gate mode the spec is the epic whose path `/flow` passes; never ask the user.
 
 ### 4. Spawn both sub-agents in parallel
 
-Use two general-purpose sub-agents in the same message. Each prompt must be self-contained, since the sub-agent has no other access to this skill.
+Use two general-purpose sub-agents in the same message, each called with `model: "sonnet"` unless the user asked for another model: checking a change against written rules and a written spec does not need the session's largest model. Each prompt must be self-contained, since the sub-agent has no other access to this skill.
 
 **Standards sub-agent.** The prompt includes the scope command(s) and commit list, the touched files, the standards files from step 2, the tooling configs, the full **baseline** below, and this brief:
 
@@ -87,20 +87,22 @@ Use two general-purpose sub-agents in the same message. Each prompt must be self
 >
 > Then check the change against every rule in the register. A rule that requires something is violated when the change should contain it and does not. A breach is not a violation when an exception to that rule is recorded the way the standards say exceptions are recorded (for example a `DA-###` decision in an epic or an ADR that names the rule ID and gives the reason for a MUST rule, or a justification citing the rule ID in the PR description for a SHOULD rule): mark it `excepted` and cite the record. Skip anything the listed tooling configs already enforce.
 >
+> Report violations by rule, not by sighting: when a rule is violated once, search the whole change for every other occurrence of that same rule — source, tests, fixtures and docs — and list all the locations under the one finding. A finding with a single location means you searched and found no other.
+>
 > Report:
-> (a) every violation: the rule (ID or `file:line`, its level, and the rule quoted), the location (`file:line`, hunk quoted), why it is a violation, and the fix the rule implies;
+> (a) every violation: the rule (ID or `file:line`, its level, and the rule quoted), every location (`file:line`; quote the hunk of the first, one line for each of the others), why it is a violation, and the fix the rule implies;
 > (b) any baseline smell you spot, labelled as a possible smell, with the hunk quoted, unless a documented rule endorses what the smell would flag;
 > (c) the register as a compact table: rule, level, source, and status `ok` / `violated` / `excepted` / `not verifiable` (say what would be needed to verify it). Leave out rules that do not apply to the touched files, but give their count.
 >
-> Documented-rule breaches are hard violations; baseline smells are always judgement calls. Do not invoke the code-review skill or spawn other agents: do this review directly. Do not edit any file. Under 700 words.
+> Documented-rule breaches are hard violations; baseline smells are always judgement calls. Do not invoke the code-review skill or spawn other agents: do this review directly. Do not edit any file. Under 800 words.
 
 **Spec sub-agent.** Skip it if there is no spec. Otherwise the prompt includes the scope command(s) and commit list, the spec's path or fetched contents, and this brief:
 
-> Report: (a) requirements the spec asks for that are missing or partial; (b) behavior in the change that the spec did not ask for (scope creep); (c) requirements that look implemented but where the implementation looks wrong. Quote the spec line for each finding and give the code location as `file:line`. Do not invoke the code-review skill or spawn other agents: do this review directly. Do not edit any file. Under 400 words.
+> Report: (a) requirements the spec asks for that are missing or partial; (b) behavior in the change that the spec did not ask for (scope creep); (c) requirements that look implemented but where the implementation looks wrong; (d) **claims**: factual statements the change adds or edits in docs, changelogs, comments, test names or messages that the repository contradicts — a version that does not exist (check the tags and the package manifests), a type, member, command or file named wrongly, a compatibility or behavior claim ("no breaking change", "only a warning", "returns 404") that the code or the tests do not bear out, a text that now contradicts its own file. A statement about an external system that the repository cannot confirm is reported as `unconfirmed`, not as wrong. Quote the spec line (or the claim) for each finding and give the code location as `file:line`. Do not invoke the code-review skill or spawn other agents: do this review directly. Do not edit any file. Under 500 words.
 
 ### 5. Verify before reporting
 
-Sub-agent output is a hypothesis. For every hard violation and every Spec finding, open the cited rule and the cited code and confirm both say what the finding claims. Drop findings whose citation is wrong. Keep a finding you cannot confirm or refute, marked `unverified`. Do not add new findings of your own at this stage, and do not re-rank across axes.
+Sub-agent output is a hypothesis. For every hard violation and every Spec finding (claims included), open the cited rule and the cited code and confirm both say what the finding claims; for a violation with several locations, confirm the first and spot-check the others. Drop findings whose citation is wrong. Keep a finding you cannot confirm or refute, marked `unverified`. Do not add new findings of your own at this stage, and do not re-rank across axes.
 
 ### 6. Report
 
@@ -119,6 +121,8 @@ Sub-agent output is a hypothesis. For every hard violation and every Spec findin
 
 ## Spec
 <missing or partial · scope creep · implemented wrong; each with the spec line quoted>
+### Claims
+<per finding: [wrong|unconfirmed] the statement quoted — location — what contradicts it, or what would confirm it>
 
 ## Summary
 Standards: <n violations, n judgement calls>; worst: <one line>
@@ -131,29 +135,40 @@ Close by asking which findings, if any, to fix. That becomes a new round. In gat
 
 ## Gate mode — when `/flow` runs this skill in execution mode
 
-`/flow`'s execution mode uses this review as the approval gate of each epic, before the epic is committed, and again after each fix round. `/flow` runs it **in its own session**: the two sub-agents cannot be spawned from inside another sub-agent, so it never runs inside `/spike` there. In gate mode:
+`/flow`'s execution mode uses this review as the approval gate of each epic, before the epic is committed, and again, as a delta gate, after each fix or polish round. `/flow` runs it **in its own session**: the two sub-agents cannot be spawned from inside another sub-agent, so it never runs inside the `spike` agent. In gate mode:
 
 - The scope is `git diff HEAD` plus the untracked files (step 1) and the spec is the epic `/flow` passes (step 3). Nothing is asked.
-- Steps 2, 4 and 5 run unchanged.
-- Number every finding across both axes (`F1`, `F2`, …) so `/flow` and `/spike` can refer to it.
+- Step 2 is not repeated: `/flow` collected the standards sources once, at the start of the run, and passes the list. Pick from it the files whose scope the touched files fall under.
+- Steps 4 and 5 run unchanged.
+- Number every finding across both axes (`F1`, `F2`, …) so `/flow` and the spike can refer to it.
 - The report drops the closing question and ends with:
 
 ```
 ## Gate
 Verdict: pass | fail
-Blocking: <per finding: F<n> — rule ID (level) — location — one line>
-Non-blocking: <F numbers: MAY findings, baseline judgement calls, Spec findings; plus the count of `not verifiable` rules>
+Blocking: <per finding: F<n> — rule ID (level) — every location — one line>
+Non-blocking: <F numbers: MAY findings, baseline judgement calls, Spec findings and claims, late findings; plus the count of `not verifiable` rules>
 ```
+
+### Delta gate — every gate after the first
+
+The first gate of an epic reviews the whole change. After it, `/flow` stages everything (`git add -A`), so the index holds what was already reviewed and `git diff` shows only what the fix or polish round changed. Every later gate of that epic is a **delta gate**: `/flow` passes the open findings (number, rule, locations) and the deviations the architect accepted, and the review does not start over.
+
+- **Standards sub-agent** — the same brief as step 4, with this in place of its second paragraph: "Open findings: {list}. For each one, confirm the rule has no occurrence left in the whole change (`git diff HEAD` plus the untracked files) and report it `closed` or `still open`, with every remaining location. Then look for new violations **only** in the delta (`git diff` plus the untracked files created since the last gate), building the register only for the rules that apply to the files in the delta. Anything you notice outside the delta goes in a separate list, `late`, one line each. Under 400 words."
+- **Spec sub-agent** — runs only when the open findings include Spec or claim items; it confirms those items and reads nothing else. Otherwise it is skipped.
+- Step 5 verifies the `still open` and the new findings as usual.
+- The verdict fails on an open finding that is still blocking, or on a new blocking violation in the delta. A **late finding** — something in code the round did not touch, which an earlier gate could have reported — never blocks, whatever its level: it is listed as non-blocking and `/flow` sends it to the polish round. Without this, each gate can surface a different part of the same change and the rounds do not converge.
 
 **The approval criterion is that the code follows the project's standards.**
 
 - **Blocks:** a `violated` MUST rule (critical), unless it is `excepted` by a `DA-###` or an ADR that cites the rule ID.
 - **Blocks:** a `violated` SHOULD rule, or a documented rule with no level (important), unless `/flow` passes a reason the architect accepted for that finding. It is then a justified deviation, which goes to the pull request description.
-- **Does not block:** MAY findings, baseline judgement calls and `not verifiable` rules. They go to the pull request description.
-- **Does not block:** the Spec axis. It still runs, and its findings are information for the pull request description.
-- A blocking finding marked `unverified` still blocks; `/spike` may contest it.
+- **Does not block:** MAY findings, baseline judgement calls and late findings. After the gate passes, `/flow` sends them to the spike in one polish round; what is left goes to the pull request description.
+- **Does not block:** the Spec axis, claims included. It runs on the first gate, and its findings go to the same polish round; what is left goes to the pull request description.
+- **Does not block:** `not verifiable` rules. They go straight to the pull request description.
+- A blocking finding marked `unverified` still blocks; the spike may contest it.
 
-The gate never fixes anything. `/flow` sends the blocking findings to `/spike` and owns the rounds: arbitration of contested findings, at most 2 fix rounds per epic, and a stop on the third failure. That limit replaces the "Do not loop" note below.
+The gate never fixes anything. `/flow` sends the blocking findings to the spike and owns the rounds: arbitration of contested findings, at most 2 fix rounds per epic, one polish round per commit, and a stop on the third failure. That limit replaces the "Do not loop" note below.
 
 ## Baseline
 

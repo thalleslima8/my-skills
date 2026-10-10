@@ -2,6 +2,48 @@
 
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.10.0] - 2026-10-10
+
+Driven by the transcripts of real `/flow` runs. The spike was not called too often; the cost was the loop implementation → gate → fix → gate, which existed because the spike was judged against rules it had never been given. In one measured epic, two fix rounds for four findings in test fixtures and a changelog cost more input tokens than the implementation and its first gate together. Everything ran on the session's model, the spike received seven phases in one call and filled its context window, and the orchestrating session grew past 250k tokens.
+
+### Added
+
+- `spike` **agent** (`plugins/workflow/agents/spike.md`), `/flow`'s implementer in execution mode. It replaces calling a general-purpose sub-agent with the `/spike` command's file, which loaded every mode of the command on each call. It declares `model: opus`.
+  - **Rule register before coding:** it reads the standards sources `/flow` passes (`CLAUDE.md`, `docs/standards/` by scope, the glossary as naming rules for code, tests, fixtures and docs, accepted ADRs, the `DA-###` in force, contributing guides, the pull request template) and lists every rule that binds the slice, obligations included.
+  - **Definition of done before every `DONE`**, run over the whole change: rules by class (every occurrence, not the first), obligations present and consistent with the text around them, factual claims in docs, changelogs, comments and test names checked against the repository, acceptance items mapped to code and tests, leftovers, and the CI's own commands on the whole suite.
+  - The `DONE` block carries the evidence: `Rules`, `Obligations`, `Claims`, `Gaps` and `Verify`.
+  - Fix rounds of kind `review` are fixed by class of finding; a new kind, `polish`, takes the non-blocking findings, which the spike fixes or declines with a reason.
+  - On a question it goes on with what does not depend on it and gathers every foreseeable question into one `BLOCKED` block. It never stages (`git add`, `git reset`, `git stash`): the index is `/flow`'s review snapshot.
+- `flow-execution` **skill**: `/flow`'s execution mode, moved out of the command so a mediation session does not carry its rules. The `/flow` command loads it when a run starts (`user-invocable: false`; never started on its own).
+- `scripts/usage-report.ps1` (PowerShell 7): reads a project's local Claude Code transcripts and reports, per session and per kind of sub-agent, the calls, the largest context reached and the input tokens spent; `-Detail` shows one session's context timeline and tool sizes. `README.md` and `docs/CONTRIBUTING.md` say what to compare before and after a workflow change.
+
+### Changed
+
+- `/flow` execution mode (now in the `flow-execution` skill):
+  - **Models:** every call names its model or takes it from its agent definition, so a run no longer costs what the session's model costs. The session itself works on `sonnet`.
+  - **Pre-flight:** a run starts in a session that carries nothing else (a session that already ran a mediation is refused unless the user says to run there). The standards sources are collected once per run and the verification commands are read from the CI workflows; both go to every spike call (`[STANDARDS SOURCES]`, `[VERIFY]`).
+  - **Slices:** `/flow` decides how much the spike gets per call — at most 3 pending phases or 12 pending items — instead of leaving it to the spike's sense of its own context. Earlier slices' summaries go in `[PREVIOUS SLICES]`; the last slice writes the epic's commit message. `HANDOFF` stays as a safety valve.
+  - **Continuing the same agent:** answers to a `BLOCKED`, review fix rounds and polish rounds continue the spike that did the work (`SendMessage`) instead of starting a new one from a cold context.
+  - **Review gate:** `/flow` checks the `DONE` block's evidence before spending a review. The first gate reviews the whole epic; then `/flow` stages everything, and every later gate is a delta gate. Fix requests ask for a sweep by class. A finding in code the fix round did not touch is a late finding and never blocks.
+  - **Polish round:** once per commit, after the gate passes, the non-blocking findings (MAY, baseline, Spec and claims, late findings) go to the spike before the commit, instead of going to the pull request and coming back as a comment round. What is declined or left open still goes to the pull request.
+  - **Session budget:** at each epic boundary, 12 or more agent calls in the session pause the run for a new session to resume. A count replaces "when the session is heavy". A pull request comment round runs in a session of its own, and uses the comments as the gate's spec.
+- `/flow` command: holds mode detection, mediation and the rules common to both modes, and loads `flow-execution` for a run. Code evidence for a mediation comes from a read-only sub-agent with a self-contained brief on `sonnet`, no longer from the `/spike` command's file. The "getting heavy" warning is decided by a count (12 agent calls or 3 trees), at the end of a point.
+- `/spike` command: the "Mode: Epic implementation under /flow" section is gone (the `spike` agent replaces it). New mandatory "Rule register and definition of done" section, wired into epic implementation, direct implementation and bug fixes; the whole test suite replaces "or the affected subset".
+- `code-review` skill (adapted from [mattpocock/skills](https://github.com/mattpocock/skills), MIT; the `LICENSE` and attribution are kept). Modifications in this version:
+  - The Standards sub-agent reports violations by rule: one finding lists every location of that rule in the change.
+  - The Spec sub-agent also reports **claims**: factual statements the change makes that the repository contradicts, with statements about external systems marked `unconfirmed`. The report gets a "Claims" subsection.
+  - Both sub-agents are called with `model: "sonnet"` unless the user asks otherwise.
+  - Gate mode: the standards sources come from `/flow` instead of being collected at every gate; a new **delta gate** for every gate after an epic's first (open findings confirmed across the whole change, new findings only in the delta, the Spec sub-agent only when there are Spec items to confirm, late findings never blocking); non-blocking findings go to `/flow`'s polish round before the pull request.
+- `design-an-interface` skill (adapted from [mattpocock/skills](https://github.com/mattpocock/skills), MIT; the `LICENSE` and attribution are kept). Modification: the design sub-agents are called with `model: "sonnet"` unless the user asks otherwise.
+- `arquiteto` and `analyst` agents: `model: sonnet` and `tools: Read, Glob, Grep`. They give opinions and write nothing, so they no longer inherit the session's model nor every tool.
+- `conventional-commit` and `test-failure-triage` skills, `/infra`, `README.md` and `docs/CONTRIBUTING.md` refer to the `spike` agent where they described `/spike` as `/flow`'s sub-agent. `docs/CONTRIBUTING.md` gains "Keeping a command light" and "Measuring a workflow change".
+- `workflow` plugin version `0.9.0` → `0.10.0`; marketplace version `0.9.0` → `0.10.0`.
+
+### Upgrade notes
+
+- A project without `docs/standards/` gives the gate only unlevelled rules, and every unlevelled documented rule blocks as "important". Writing the project's rules there with IDs and MUST / SHOULD / MAY levels makes the gate predictable.
+- Ask `/flow` to implement in a new session, and start another one for the pull request comment round.
+
 ## [0.9.0] - 2026-10-03
 
 ### Added
